@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.monitor.annotation.BussinessLog;
+import com.alibaba.monitor.result.AjaxResult;
 import com.alibaba.monitor.service.impl.SmsSender;
 
 import org.slf4j.Logger;
@@ -27,23 +28,24 @@ public class MessageController {
     @Autowired
     SmsSender sender;
 
+    /**
+     * @param message
+     * @return
+     */
     @BussinessLog(value = "发送")
     @RequestMapping("/send")
-    public Map<String, Object> send(String message) {
-        Map<String, Object> map = new HashMap<String, Object>();
+    public AjaxResult send(String callback, String message) {
 
         try {
             logger.info(message);
             logger.error(message);
             sender.send(message);
-            map.put("success", true);
+            return AjaxResult.succResult(callback);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
-            map.put("success", false);
+            return AjaxResult.errResult(callback, e.getMessage());
 
         }
-
-        return map;
     }
 }
